@@ -3,9 +3,10 @@
 Recording::Recording(QObject *parent) : QObject(parent)
 {
     length = 0;
-    wave = Waveform::WAVE_1;
+    wave = Waveform::ALPHA;
     freq = Frequency::POINT_FIVE;
     date = QDate::currentDate();
+    current = 500;
 }
 
 

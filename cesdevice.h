@@ -7,6 +7,7 @@
 #include "currentcontrol.h"
 #include "clips.h"
 #include <QDebug>
+#include <QTimer>
 
 // timeout in 30,000ms or 30 seconds if idle (rather than 30 minutes)
 #define IDLE_TIMEOUT 30000
@@ -25,6 +26,8 @@ private:
 
     Recording* current;
     QList<Recording*> recordings;
+
+    bool powerWarned;
 
     bool saveRecording;
 
@@ -45,6 +48,7 @@ public:
 public slots:
     //void navigateDownMenu();
    //void navigateUpMenu();
+    void powerUpdate(int p);
     void onTick();
     void onCurrentChange(int c);
     void onClipChange(bool b);
@@ -52,7 +56,7 @@ public slots:
     void powerOn();
 
 signals:
-
+    void powerStatus(int p);
 };
 
 #endif // CESDEVICE_H

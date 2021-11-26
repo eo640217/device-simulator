@@ -2,23 +2,25 @@
 #define BATTERY_H
 
 #include <QObject>
-#include <QTimer>
+#include "recording.h"
+#include "devicestatus.h"
+#include <QDebug>
 
 class Battery : public QObject
 {
     Q_OBJECT
 private:
-    int power;
+    double power;
     double drain;
-    QTimer drainT;
 
 public:
     explicit Battery(QObject *parent = nullptr);
-    void setDrain(double d);
+    void setDrain(Recording* c, DeviceStatus d);
     int getPower();
+    void drainTick();
 
-signals:
-    void powerNotif(int power);
+public slots:
+    void onCharge();
 };
 
 #endif // BATTERY_H
