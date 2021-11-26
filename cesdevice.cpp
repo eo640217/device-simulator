@@ -3,9 +3,17 @@
 CESDevice::CESDevice(QObject *parent) : QObject(parent)
 {
     status = DeviceStatus::OFF;
-    autoS = 30; // or 45 or 60
+    //set shutdown time
+    shutdownTime = AutoShutdown::TWENTY_M;
+    if (shutdownTime == AutoShutdown::TWENTY_M)
+        autoS = 20;
+    else if (shutdownTime == AutoShutdown::FOURTY_M)
+        autoS = 40;
+    else
+        autoS = 60;
 
     saveRecording = true;
+    powerWarned = false;
 
     // configure the power and other stuff...
 
@@ -30,6 +38,8 @@ void CESDevice::shutdown() {
     // make sure we stop idleT
 
     qInfo("shutting down");
+
+    powerWarned = false;
 
     idleT.stop();
 
@@ -67,7 +77,6 @@ void CESDevice::powerOn() {
     // recording also stores the state of the CURRENT treatment
     current = new Recording;
 
-    // start power drain?
 }
 //UNCOMMENT WHEN UI IS ADDED
 /*
@@ -114,7 +123,12 @@ void CESDevice::onTick() {
     // do some stuff every tick
     qInfo("tick hit");
 
-    // POWER DRAIN should happen probs
+    // power drain
+    battery.drainTick();
+
+    int power = battery.getPower();
+
+    powerUpdate(power);
 
     if (status == DeviceStatus::IDLE) {
         // do nothing
@@ -124,14 +138,25 @@ void CESDevice::onTick() {
     if (status == DeviceStatus::RUNNING) {
         treatmentTick();
         // update gui display for timer/current here
-        qDebug() << "Current is currently: " << cController.getCurrent();
-        qDebug() << "Timer: " << autoS - current->getLength();
+        displayTimer();
+        displayCurrent();
 
     }
 }
 
+void CESDevice::displayTimer() {
+    qDebug() << "Timer: " << autoS - current->getLength();
+}
+
+void CESDevice::displayCurrent() {
+    qDebug() << "Current: " << cController.getCurrent();
+}
+
 void CESDevice::onCurrentChange(int c) {
     current->setCurrent(c);
+
+    // update battery drain
+    battery.setDrain(current, status);
 }
 
 void CESDevice::onClipChange(bool connected) {
@@ -143,9 +168,27 @@ void CESDevice::onClipChange(bool connected) {
         idleT.start(IDLE_TIMEOUT);
         status = DeviceStatus::PAUSED;
     }
-    //after 5 seconds treatment should stop completely and go to menu
+
+    // update the battery drain
+    battery.setDrain(current, status);
 }
 
 void CESDevice::setAutoShutdown(int s) {
     autoS = s;
+}
+
+void CESDevice::powerUpdate(int p) {
+    // for the GUI to hook in
+    emit powerStatus(p);
+
+    if (!powerWarned && p <= 5 && p > 2) {
+        // issue a warning
+        qDebug() << "DEVICE: 5% power warning";
+    } else if (p <= 2) {
+        qDebug() << "DEVICE: power out shutting down";
+        // issue another warning?
+        shutdown();
+    }
+
+    powerWarned = true;
 }

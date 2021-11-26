@@ -3,7 +3,7 @@
 
 enum class AutoShutdown {
     TWENTY_M,
-    THIRTY_M,
+    FOURTY_M,
     SIXTY_M
 };
 
