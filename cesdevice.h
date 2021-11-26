@@ -1,13 +1,13 @@
 #ifndef CESDEVICE_H
 #define CESDEVICE_H
 
+#include "autoshutdown.h"
 #include "devicestatus.h"
 #include "recording.h"
 #include "battery.h"
 #include "currentcontrol.h"
 #include "clips.h"
 #include <QDebug>
-#include <QTimer>
 
 // timeout in 30,000ms or 30 seconds if idle (rather than 30 minutes)
 #define IDLE_TIMEOUT 30000
@@ -27,8 +27,6 @@ private:
     Recording* current;
     QList<Recording*> recordings;
 
-    bool powerWarned;
-
     bool saveRecording;
 
     Battery battery;
@@ -46,9 +44,10 @@ public:
     explicit CESDevice(QObject *parent = nullptr);
 
 public slots:
-    //void navigateDownMenu();
+   //void navigateDownMenu();
    //void navigateUpMenu();
-    void powerUpdate(int p);
+   //void leftCurrentChange();
+   //void rightCurrentChange();
     void onTick();
     void onCurrentChange(int c);
     void onClipChange(bool b);
@@ -56,7 +55,7 @@ public slots:
     void powerOn();
 
 signals:
-    void powerStatus(int p);
+
 };
 
 #endif // CESDEVICE_H

@@ -6,7 +6,6 @@ CESDevice::CESDevice(QObject *parent) : QObject(parent)
     autoS = 30; // or 45 or 60
 
     saveRecording = true;
-    powerWarned = false;
 
     // configure the power and other stuff...
 
@@ -15,6 +14,10 @@ CESDevice::CESDevice(QObject *parent) : QObject(parent)
     // menu navigation /* UNCOMMENT WHEN UI IS ADDED */
     // connect(ui->upButton, &QPushButton::pressed, this, &CESDevice::navigateUpMenu);
     // connect(ui->downButton, &QPushButton::pressed, this, &CESDevice::navigateDownMenu);
+
+    // current change buttons
+    // connect(&ui->leftCurrentButton, &QPushButton::pressed, this, &CESDevice::leftCurrentChange)
+    // connect(&ui->rightCurrentButton, &QPushButton::pressed, this, &CESDevice::rightCurrentChange)
 
     // if idleT goes off then shutdown
     connect(&idleT, &QTimer::timeout, this, &CESDevice::shutdown);
@@ -27,8 +30,6 @@ void CESDevice::shutdown() {
     // make sure we stop idleT
 
     qInfo("shutting down");
-
-    powerWarned = false;
 
     idleT.stop();
 
@@ -66,6 +67,7 @@ void CESDevice::powerOn() {
     // recording also stores the state of the CURRENT treatment
     current = new Recording;
 
+    // start power drain?
 }
 //UNCOMMENT WHEN UI IS ADDED
 /*
@@ -89,7 +91,10 @@ void CESDevice::navigateDownMenu() {
         i = ui->menuListView->count() - 1;
     }
     //ui->menuListView->setCurrentRow(i);
-} */
+}
+void leftCurrentChange() { cController.incrementCurrent(); }
+void rightCurrentChange() { cController.incrementCurrent(); }
+*/
 
 void CESDevice::treatmentTick() {
     // check clip connection TODO (if clips not connected should be in paused state)
@@ -109,12 +114,7 @@ void CESDevice::onTick() {
     // do some stuff every tick
     qInfo("tick hit");
 
-    // power drain
-    battery.drainTick();
-
-    int power = battery.getPower();
-
-    powerUpdate(power);
+    // POWER DRAIN should happen probs
 
     if (status == DeviceStatus::IDLE) {
         // do nothing
@@ -123,14 +123,15 @@ void CESDevice::onTick() {
 
     if (status == DeviceStatus::RUNNING) {
         treatmentTick();
+        // update gui display for timer/current here
+        qDebug() << "Current is currently: " << cController.getCurrent();
+        qDebug() << "Timer: " << autoS - current->getLength();
+
     }
 }
 
 void CESDevice::onCurrentChange(int c) {
     current->setCurrent(c);
-
-    // update battery drain
-    battery.setDrain(current, status);
 }
 
 void CESDevice::onClipChange(bool connected) {
@@ -142,27 +143,9 @@ void CESDevice::onClipChange(bool connected) {
         idleT.start(IDLE_TIMEOUT);
         status = DeviceStatus::PAUSED;
     }
-
-    // update the battery drain
-    battery.setDrain(current, status);
+    //after 5 seconds treatment should stop completely and go to menu
 }
 
 void CESDevice::setAutoShutdown(int s) {
     autoS = s;
-}
-
-void CESDevice::powerUpdate(int p) {
-    // for the GUI to hook in
-    emit powerStatus(p);
-
-    if (!powerWarned && p <= 5 && p > 2) {
-        // issue a warning
-        qDebug() << "DEVICE: 5% power warning";
-    } else if (p <= 2) {
-        qDebug() << "DEVICE: power out shutting down";
-        // issue another warning?
-        shutdown();
-    }
-
-    powerWarned = true;
 }
