@@ -3,7 +3,7 @@
 CESDevice::CESDevice(QObject *parent) : QObject(parent)
 {
     status = DeviceStatus::OFF;
-    autoS = 5;
+    autoS = 30; // or 45 or 60
 
     saveRecording = true;
 
@@ -11,6 +11,9 @@ CESDevice::CESDevice(QObject *parent) : QObject(parent)
 
     // connect the slots to their respective events TODO...
 
+    // menu navigation /* UNCOMMENT WHEN UI IS ADDED */
+    // connect(ui->upButton, &QPushButton::pressed, this, &CESDevice::navigateUpMenu);
+    // connect(ui->downButton, &QPushButton::pressed, this, &CESDevice::navigateDownMenu);
 
     // if idleT goes off then shutdown
     connect(&idleT, &QTimer::timeout, this, &CESDevice::shutdown);
@@ -44,6 +47,7 @@ void CESDevice::shutdown() {
 
 }
 
+
 void CESDevice::powerOn() {
     qInfo("test power on");
 
@@ -61,6 +65,29 @@ void CESDevice::powerOn() {
 
     // start power drain?
 }
+//UNCOMMENT WHEN UI IS ADDED
+/*
+void CESDevice::navigateUpMenu() {
+    // CHANGE menuListView to whatever the name on ui is
+    int i = ui->menuListView->currentRow() - 1;
+
+    if (i < 0) {
+        i = ui->menuListView->count() - 1;
+    }
+
+    //ui->menuListView->setCurrentRow(i);
+}
+
+
+void CESDevice::navigateDownMenu() {
+    // CHANGE menuListView to whatever the name on ui is
+    int i = ui->menuListView->currentRow() + 1;
+
+    if (i > ui->menuListView->count() - 1) {
+        i = ui->menuListView->count() - 1;
+    }
+    //ui->menuListView->setCurrentRow(i);
+} */
 
 void CESDevice::treatmentTick() {
     // check clip connection TODO (if clips not connected should be in paused state)

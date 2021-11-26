@@ -43,6 +43,8 @@ public:
     explicit CESDevice(QObject *parent = nullptr);
 
 public slots:
+    //void navigateDownMenu();
+   //void navigateUpMenu();
     void onTick();
     void onCurrentChange(int c);
     void onClipChange(bool b);
