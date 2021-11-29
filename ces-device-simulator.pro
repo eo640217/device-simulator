@@ -20,9 +20,17 @@ SOURCES += \
     cesdevice.cpp \
     clips.cpp \
     currentcontrol.cpp \
+    devicecontrolpadview.cpp \
+    devicescreenhistoryview.cpp \
+    devicescreenmenuview.cpp \
+    devicescreenoffview.cpp \
+    devicescreentreatmentview.cpp \
+    devicescreenview.cpp \
+    deviceview.cpp \
     main.cpp \
     mainwindow.cpp \
-    recording.cpp
+    recording.cpp \
+    sidemenuview.cpp
 
 HEADERS += \
     autoshutdown.h \
@@ -30,14 +38,31 @@ HEADERS += \
     cesdevice.h \
     clips.h \
     currentcontrol.h \
+    devicecontrolpadview.h \
+    devicescreenhistoryview.h \
+    devicescreenmenuview.h \
+    devicescreenoffview.h \
+    devicescreentreatmentview.h \
+    devicescreenview.h \
     devicestatus.h \
+    deviceview.h \
     frequency.h \
     mainwindow.h \
     recording.h \
+    screenview.h \
+    sidemenuview.h \
     waveform.h
 
 FORMS += \
-    mainwindow.ui
+    devicecontrolpadview.ui \
+    devicescreenhistoryview.ui \
+    devicescreenmenuview.ui \
+    devicescreenoffview.ui \
+    devicescreentreatmentview.ui \
+    devicescreenview.ui \
+    deviceview.ui \
+    mainwindow.ui \
+    sidemenuview.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
