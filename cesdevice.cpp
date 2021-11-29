@@ -107,6 +107,9 @@ void rightCurrentChange() { cController.incrementCurrent(); }
 
 void CESDevice::treatmentTick() {
     // check clip connection TODO (if clips not connected should be in paused state)
+    if (!clips.isConnected()){
+        status = DeviceStatus::PAUSED;
+    }
 
     if (status == DeviceStatus::RUNNING) {
         current->incrementSecond();

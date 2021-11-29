@@ -37,7 +37,7 @@ private:
     Clips clips;
     CurrentControl cController;
 
-    QTimer idleT, tickT;
+    QTimer idleT, tickT, disconnectT;
 
     void treatmentTick();
     void overload();
