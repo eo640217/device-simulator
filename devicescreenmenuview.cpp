@@ -204,6 +204,14 @@ void DeviceScreenMenuView::setCurrentSaveRecording(int saveR){
     }
 }
 
+void DeviceScreenMenuView::resetMenuOptionsDefault() {
+    setCurrentFrequency(0);
+    setCurrentSaveRecording(0);
+    setCurrentTreatmentTime(0);
+    setCurrentWaveform(0);
+    setCurrentMenuItem(0);
+}
+
 DeviceScreenMenuView::~DeviceScreenMenuView()
 {
     delete ui;

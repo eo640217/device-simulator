@@ -24,6 +24,8 @@ public:
     ScreenView destinationView();
     ~DeviceScreenMenuView();
 
+    void resetMenuOptionsDefault();
+
 private:
     CESDevice* device;
     Ui::DeviceScreenMenuView *ui;

@@ -141,6 +141,7 @@ void DeviceScreenView::power(){
     }
 
     device->shutdown();
+    mainMenu->resetMenuOptionsDefault();
     this->setActiveView(ScreenView::OFF);
     toggleStatusBar(false);
 }
@@ -157,6 +158,7 @@ void DeviceScreenView::toggleStatusBar(bool b) {
 
 void DeviceScreenView::idleShutdown() {
     this->setActiveView(ScreenView::OFF);
+    mainMenu->resetMenuOptionsDefault();
     toggleStatusBar(false);
 }
 
