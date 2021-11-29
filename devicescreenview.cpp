@@ -41,6 +41,7 @@ DeviceScreenView::DeviceScreenView(CESDevice* d, QWidget *parent) :
 
     connect(device, &CESDevice::powerStatus, this, &DeviceScreenView::batteryUpdate);
     connect(device, &CESDevice::shuttingDown, this, &DeviceScreenView::idleShutdown);
+    connect(device, &CESDevice::clipChanged, this, &DeviceScreenView::onClipChange);
 
 
 }
@@ -148,12 +149,18 @@ void DeviceScreenView::batteryUpdate(int p) {
 void DeviceScreenView::toggleStatusBar(bool b) {
     ui->BatteryLevel->setVisible(b);
     ui->MenuLabel->setVisible(b);
-    ui->TestCircuit->setVisible(b);
+    ui->TestCircuit->setVisible(b && !device->getClips()->getConnected());
 }
 
 void DeviceScreenView::idleShutdown() {
     this->setActiveView(ScreenView::OFF);
     toggleStatusBar(false);
+}
+
+void DeviceScreenView::onClipChange(bool b) {
+    if (device->getStatus() != DeviceStatus::OFF && device->getStatus() != DeviceStatus::DISABLED) {
+        ui->TestCircuit->setVisible(!b);
+    }
 }
 
 

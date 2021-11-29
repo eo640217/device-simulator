@@ -22,7 +22,7 @@ class CESDevice : public QObject
 
 private:
     // change this to change the fraction of time elapsed (1 = realtime, 1s in sim = 1s), (0.5 = 2x speed, 1s in sim = 0.5s), etc
-    static double timeFactor;
+
     DeviceStatus status;
 
     int autoS;
@@ -41,7 +41,6 @@ private:
     QTimer idleT, tickT;
 
     void treatmentTick();
-    void overload();
 
     void charge();
     void displayTimer();
@@ -49,12 +48,16 @@ private:
 
 
 public:
+    static double timeFactor;
     explicit CESDevice(QObject *parent = nullptr);
     CurrentControl* getCController();
     DeviceStatus getStatus();
     void shutdown();
     QList<Recording*>* getRecordings();
     Recording* getCurrentRecording();
+    void updateTimeFactor(int f);
+    Battery* getBattery();
+    Clips* getClips();
 
 public slots:
    //void navigateDownMenu();
@@ -68,12 +71,14 @@ public slots:
     void setAutoShutdown(AutoShutdown c);
     void powerOn();
     void setSaveRecording(bool b);
+    void overload();
 
 
 signals:
     void powerStatus(int p);
     void currentChanged(int c);
     void shuttingDown();
+    void clipChanged(bool b);
 };
 
 #endif // CESDEVICE_H

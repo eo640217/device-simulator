@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 #include "devicescreenview.h"
 #include "devicecontrolpadview.h"
+#include "sidemenuview.h"
 #include <QLabel>
 #include <QSizePolicy>
 
@@ -27,11 +28,26 @@ DeviceView::DeviceView(QWidget *parent) :
 
 
     QVBoxLayout* deviceLayout = new QVBoxLayout();
-    this->setLayout(deviceLayout);
+    QHBoxLayout* windowLayout = new QHBoxLayout();
 
-    static_cast<QVBoxLayout*>(this->layout())->addWidget(title, 0, Qt::AlignCenter);
-    this->layout()->addWidget(deviceScreenView);
-    this->layout()->addWidget(deviceControlPadView);
+
+
+    this->setLayout(windowLayout);
+
+    static_cast<QVBoxLayout*>(deviceLayout)->addWidget(title, 0, Qt::AlignCenter);
+    deviceLayout->addWidget(deviceScreenView);
+    deviceLayout->addWidget(deviceControlPadView);
+
+    QWidget* main = new QWidget;
+
+    main->setLayout(deviceLayout);
+
+    windowLayout->addWidget(main);
+
+    SideMenuView* sideMenuView = new SideMenuView(&device);
+
+    windowLayout->addWidget(sideMenuView);
+
 
 }
 

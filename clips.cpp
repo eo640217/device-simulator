@@ -11,8 +11,5 @@ bool Clips::getConnected(){
 void Clips::setConnected(bool c){
     connected = c;
 
-    // connected signal
-    emit connectedChange(connected);
-
     qDebug() << "Clips Connected? " << connected;
 }

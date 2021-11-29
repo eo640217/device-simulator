@@ -12,10 +12,5 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-//    CESDevice device;
-
-//    device.powerOn();
-//    device.onClipChange(true);
-
     return a.exec();
 }

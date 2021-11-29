@@ -5,28 +5,28 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QCheckBox>
+#include <QSlider>
 
-SideMenuView::SideMenuView(QWidget *parent) :
+SideMenuView::SideMenuView(CESDevice* d, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SideMenuView)
 {
     ui->setupUi(this);
 
-    QVBoxLayout* layout = new QVBoxLayout();
-    this->setLayout(layout);
+    device = d;
 
-    QWidget* electrodesMenuItem = new QWidget();
-    electrodesMenuItem->setLayout(new QHBoxLayout());
-    QLabel* electrodeLabel = new QLabel("Electrodes touch skin");
-    QCheckBox* electrodeCheckBox = new QCheckBox();
-    electrodesMenuItem->layout()->addWidget(electrodeLabel);
-    electrodesMenuItem->layout()->addWidget(electrodeCheckBox);
+    connect(ui->ClipCheckbox, &QCheckBox::toggled, device, &CESDevice::onClipChange);
+    connect(ui->TimeSlider, &QSlider::sliderReleased, this, &SideMenuView::updateTimeFactor);
+    connect(ui->ChargeButton, &QPushButton::clicked, device->getBattery(), &Battery::onCharge);
+    connect(ui->OverloadButton, &QPushButton::clicked, device, &CESDevice::overload);
 
-    QLabel* title = new QLabel("Side Menu");
-    static_cast<QVBoxLayout*>(this->layout())->addWidget(title, 0, Qt::AlignCenter);
 
-    this->layout()->addWidget(electrodesMenuItem);
+}
 
+void SideMenuView::updateTimeFactor() {
+    ui->TimeLabel->setText(QString("%1x").arg(ui->TimeSlider->value()));
+
+    device->updateTimeFactor(ui->TimeSlider->value());
 }
 
 SideMenuView::~SideMenuView()

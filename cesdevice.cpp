@@ -8,8 +8,6 @@ CESDevice::CESDevice(QObject *parent) : QObject(parent)
     //set shutdown time
     setAutoShutdown(AutoShutdown::TWENTY_M);
 
-
-
     saveRecording = true;
     powerWarned = false;
 
@@ -45,6 +43,11 @@ void CESDevice::shutdown() {
 
     tickT.stop();
 
+    if (status == DeviceStatus::DISABLED) {
+        qDebug() << "device is disabled!";
+        return;
+    }
+
     // save recording (if we were in a treatment)
     if (saveRecording && (status == DeviceStatus::RUNNING || status == DeviceStatus::PAUSED)) {
         recordings.append(current);
@@ -65,7 +68,10 @@ void CESDevice::shutdown() {
 void CESDevice::powerOn() {
     qInfo("test power on");
 
-    // make sure we have power to turn on? TODO
+    if (status == DeviceStatus::DISABLED) {
+        qDebug() << "device is disabled cannot power on!";
+        return;
+    }
 
     // just turned it on
     status = DeviceStatus::IDLE;
@@ -165,6 +171,8 @@ void CESDevice::onCurrentChange(int c) {
 }
 
 void CESDevice::onClipChange(bool connected) {
+    clips.setConnected(connected);
+
     if (connected && status != DeviceStatus::DISABLED && status != DeviceStatus::OFF) {
         qInfo("start treatment for %d", autoS);
         idleT.stop();
@@ -174,6 +182,7 @@ void CESDevice::onClipChange(bool connected) {
         idleT.start(TICK * 5 * timeFactor);
         status = DeviceStatus::PAUSED;
     }
+    emit clipChanged(connected);
 
     // update the battery drain
     battery.setDrain(current, status);
@@ -222,4 +231,36 @@ Recording* CESDevice::getCurrentRecording() {
 
 void CESDevice::setSaveRecording(bool b) {
     saveRecording = b;
+}
+
+void CESDevice::updateTimeFactor(int c) {
+    int remaining;
+    if (idleT.isActive()) {
+        remaining = idleT.remainingTime();
+        idleT.stop();
+        idleT.start(remaining * (1.0/timeFactor) * (1.0/c));
+    }
+
+    if (tickT.isActive()) {
+        tickT.stop();
+        tickT.start(TICK * (1.0/c));
+    }
+
+    CESDevice::timeFactor = 1.0/c;
+
+    qDebug() << "time factor is now " << CESDevice::timeFactor;
+}
+
+Battery* CESDevice::getBattery() {
+    return &battery;
+}
+
+void CESDevice::overload() {
+    status = DeviceStatus::DISABLED;
+
+    shutdown();
+}
+
+Clips* CESDevice::getClips() {
+    return &clips;
 }

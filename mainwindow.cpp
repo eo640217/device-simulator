@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "sidemenuview.h"
 #include "deviceview.h"
 #include <QHBoxLayout>
 
@@ -10,16 +9,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    SideMenuView* sideMenuView = new SideMenuView();
+//    SideMenuView* sideMenuView = new SideMenuView();
     DeviceView* deviceView = new DeviceView();
 
-    QHBoxLayout *mainWindowLayout = new QHBoxLayout();
-    QWidget *mainWidget = new QWidget();
-    mainWidget->setLayout(mainWindowLayout);
-    this->setCentralWidget(mainWidget);
+    setCentralWidget(deviceView);
 
-    mainWidget->layout()->addWidget(deviceView);
-    mainWidget->layout()->addWidget(sideMenuView);
+//    QHBoxLayout *mainWindowLayout = new QHBoxLayout();
+//    QWidget *mainWidget = new QWidget();
+//    mainWidget->setLayout(mainWindowLayout);
+//    this->setCentralWidget(mainWidget);
+
+//    mainWidget->layout()->addWidget(deviceView);
+//    mainWidget->layout()->addWidget(sideMenuView);
 
 }
 

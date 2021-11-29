@@ -43,6 +43,7 @@ public slots:
     void power();
     void batteryUpdate(int p);
     void idleShutdown();
+    void onClipChange(bool c);
 };
 
 #endif // DEVICESCREENVIEW_H
