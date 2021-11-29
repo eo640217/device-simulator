@@ -2,9 +2,9 @@
 #define WAVEFORM_H
 
 enum class Waveform{
-    ALPHA,
-    BETA,
-    GAMMA
+    ALPHA = 1,
+    BETA = 2,
+    GAMMA = 3
 };
 
 #endif // WAVEFORM_H

@@ -8,15 +8,17 @@ class CurrentControl : public QObject
     Q_OBJECT
 public:
     explicit CurrentControl(QObject *parent = nullptr);
-    void changeCurrent(int);
-    int getCurrent();
 
-private:
-    int16_t current;
+    int getCurrent();
     void increaseCurrent();
     void decreaseCurrent();
 
+private:
+    int current;
+
+
 signals:
+    void currentChanged(int);
 
 };
 

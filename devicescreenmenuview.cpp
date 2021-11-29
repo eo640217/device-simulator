@@ -6,11 +6,13 @@
 #include <QDebug>
 #include <QPalette>
 
-DeviceScreenMenuView::DeviceScreenMenuView(QWidget *parent) :
+DeviceScreenMenuView::DeviceScreenMenuView(CESDevice* d, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DeviceScreenMenuView)
 {
     ui->setupUi(this);
+
+    device = d;
 
     //Main menu options to choose from
     QVector<QString> mainMenuItems;
@@ -18,25 +20,30 @@ DeviceScreenMenuView::DeviceScreenMenuView(QWidget *parent) :
     mainMenuItems.append("Frequencies");
     mainMenuItems.append("Waveforms");
     mainMenuItems.append("Treatment Time");
+    mainMenuItems.append("Save Recording");
     mainMenuItems.append("History");
 
     //Frequency options to choose from
     QVector<QString> frequencyMenuItems;
-    frequencyMenuItems.append("0.5 Hz");
-    frequencyMenuItems.append("75 Hz");
-    frequencyMenuItems.append("100 Hz");
+    frequencyMenuItems.append("0.5 Hz >");
+    frequencyMenuItems.append("< 75 Hz >");
+    frequencyMenuItems.append("< 100 Hz");
 
     //Waveform options to choose from
     QVector<QString> waveformMenuItems;
-    waveformMenuItems.append("Alpha");
-    waveformMenuItems.append("Betta");
-    waveformMenuItems.append("Gamma");
+    waveformMenuItems.append("Alpha >");
+    waveformMenuItems.append("< Betta >");
+    waveformMenuItems.append("< Gamma");
 
     //Treatment time options to choose from
     QVector<QString> treatmentTimeMenuItems;
-    treatmentTimeMenuItems.append("20 minutes");
-    treatmentTimeMenuItems.append("40 minutes");
-    treatmentTimeMenuItems.append("60 minutes");
+    treatmentTimeMenuItems.append("20 minutes >");
+    treatmentTimeMenuItems.append("< 40 minutes >");
+    treatmentTimeMenuItems.append("< 60 minutes");
+
+    QVector<QString> saveRecordingMenuItems;
+    saveRecordingMenuItems.append("On >");
+    saveRecordingMenuItems.append("< Off");
 
     QGridLayout* layout = new QGridLayout();
     this->setLayout(layout);
@@ -61,10 +68,17 @@ DeviceScreenMenuView::DeviceScreenMenuView(QWidget *parent) :
         static_cast<QGridLayout*>(this->layout())->addWidget(this->treatmentTimeItems[i], 3, 1, Qt::AlignRight);
     }
 
+    for(int i = 0; i < saveRecordingMenuItems.length(); i++){
+        this->saveRecordingItems.append(new QLabel(saveRecordingMenuItems[i]));
+        static_cast<QGridLayout*>(this->layout())->addWidget(this->saveRecordingItems[i], 4, 1, Qt::AlignRight);
+    }
+
     this->setCurrentMenuItem(0);
     this->setCurrentFrequency(0);
     this->setCurrentWaveform(0);
     this->setCurrentTreatmentTime(0);
+    this->setCurrentSaveRecording(0);
+
 }
 
 void DeviceScreenMenuView::up(){
@@ -78,27 +92,42 @@ void DeviceScreenMenuView::down(){
 void DeviceScreenMenuView::left(){
     if(this->currentMenuItem == 1){
         this->setCurrentFrequency(this->currentFrequency - 1);
+        device->getCurrentRecording()->setFreq((Frequency) this->currentFrequency);
+        // set in the system
     } else if(this->currentMenuItem == 2){
         this->setCurrentWaveform(this->currentWaveform - 1);
+        device->getCurrentRecording()->setWaveform((Waveform) this->currentWaveform);
     } else if(this->currentMenuItem == 3){
         this->setCurrentTreatmentTime(this->currentTreatmentTime - 1);
+        device->setAutoShutdown((AutoShutdown) this->currentTreatmentTime);
+    } else if (this->currentMenuItem == 4) {
+        this->setCurrentSaveRecording(this->currentSaveRecording - 1);
+        // set on the device
+        device->setSaveRecording(this->currentSaveRecording == 0);
     }
 }
 
 void DeviceScreenMenuView::right(){
     if(this->currentMenuItem == 1){
         this->setCurrentFrequency(this->currentFrequency + 1);
+        device->getCurrentRecording()->setFreq((Frequency) this->currentFrequency);
     } else if(this->currentMenuItem == 2){
         this->setCurrentWaveform(this->currentWaveform + 1);
+        device->getCurrentRecording()->setWaveform((Waveform) this->currentWaveform);
     } else if(this->currentMenuItem == 3){
         this->setCurrentTreatmentTime(this->currentTreatmentTime + 1);
+        device->setAutoShutdown((AutoShutdown) this->currentTreatmentTime);
+    } else if (this->currentMenuItem == 4) {
+        this->setCurrentSaveRecording(this->currentSaveRecording + 1);
+        // set on device
+        device->setSaveRecording(this->currentSaveRecording == 0);
     }
 }
 
 ScreenView DeviceScreenMenuView::destinationView(){
     if(this->currentMenuItem == 0){
         return ScreenView::TREATMENT;
-    } else if(this->currentMenuItem == 4){
+    } else if(this->currentMenuItem == 5){
         return ScreenView::HISTORY;
     }
 
@@ -156,6 +185,19 @@ void DeviceScreenMenuView::setCurrentTreatmentTime(int treatmentTime){
                 this->treatmentTimeItems[i]->show();
             } else {
                 this->treatmentTimeItems[i]->hide();
+            }
+        }
+    }
+}
+
+void DeviceScreenMenuView::setCurrentSaveRecording(int saveR){
+    if(saveR >= 0 && saveR < this->saveRecordingItems.length()){
+        this->currentSaveRecording = saveR;
+        for(int i = 0; i < this->saveRecordingItems.length(); i++){
+            if(i == saveR){
+                this->saveRecordingItems[i]->show();
+            } else {
+                this->saveRecordingItems[i]->hide();
             }
         }
     }

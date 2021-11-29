@@ -7,6 +7,7 @@
 #include "screenview.h"
 #include "devicescreenhistoryview.h"
 #include "devicescreenoffview.h"
+#include "cesdevice.h"
 
 namespace Ui {
 class DeviceScreenView;
@@ -17,7 +18,7 @@ class DeviceScreenView : public QWidget
     Q_OBJECT
 
 public:
-    explicit DeviceScreenView(QWidget *parent = nullptr);
+    explicit DeviceScreenView(CESDevice* d, QWidget *parent = nullptr);
     ~DeviceScreenView();
 
 private:
@@ -27,7 +28,9 @@ private:
     DeviceScreenTreatmentView* treatmentView;
     DeviceScreenOffView* offView;
     DeviceScreenHistoryView* historyView;
+    CESDevice* device;
     void setActiveView(ScreenView);
+    void toggleStatusBar(bool b);
 
 
 public slots:
@@ -38,6 +41,8 @@ public slots:
     void select();
     void back();
     void power();
+    void batteryUpdate(int p);
+    void idleShutdown();
 };
 
 #endif // DEVICESCREENVIEW_H
