@@ -13,7 +13,7 @@ DeviceView::DeviceView(QWidget *parent) :
     ui->setupUi(this);
 
     QLabel* title = new QLabel("CES");
-    DeviceScreenView* deviceScreenView = new DeviceScreenView();
+    DeviceScreenView* deviceScreenView = new DeviceScreenView(&device);
     DeviceControlPadView* deviceControlPadView = new DeviceControlPadView();
 
     connect(deviceControlPadView, SIGNAL(upPressed()), deviceScreenView, SLOT(navigateUp()));
@@ -23,6 +23,8 @@ DeviceView::DeviceView(QWidget *parent) :
     connect(deviceControlPadView, SIGNAL(backPressed()), deviceScreenView, SLOT(back()));
     connect(deviceControlPadView, SIGNAL(selectPressed()), deviceScreenView, SLOT(select()));
     connect(deviceControlPadView, SIGNAL(powerPressed()), deviceScreenView, SLOT(power()));
+
+
 
     QVBoxLayout* deviceLayout = new QVBoxLayout();
     this->setLayout(deviceLayout);

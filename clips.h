@@ -9,14 +9,15 @@ class Clips : public QObject
     Q_OBJECT
 public:
     explicit Clips(QObject *parent = nullptr);
-    bool isConnected();
-    void connect();
-    void disconnect();
+    bool getConnected();
+    void setConnected(bool c);
+
 private:
    bool connected;
    int disconnectionTimer;
 
 signals:
+   void connectedChange(bool c);
 
 };
 

@@ -20,7 +20,7 @@ void Battery::setDrain(Recording* c, DeviceStatus d) {
 
     // calculate the new battery drain (0.00004 / uA)
     // freq 0.5 = 0.001; freq 77 = 0.002; freq 100 = 0.003
-    drain = c->getCurrent() * 0.000004 + ((int) c->getFreq() * 0.001);
+    drain = c->getCurrent() * 0.000004 + (((int) c->getFreq() + 1) * 0.001);
 }
 
 

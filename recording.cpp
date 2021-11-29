@@ -1,4 +1,5 @@
 #include "recording.h"
+#include <QDebug>
 
 Recording::Recording(QObject *parent) : QObject(parent)
 {
@@ -6,7 +7,7 @@ Recording::Recording(QObject *parent) : QObject(parent)
     wave = Waveform::ALPHA;
     freq = Frequency::POINT_FIVE;
     date = QDate::currentDate();
-    current = 500;
+    current = 100;
 }
 
 
@@ -15,6 +16,7 @@ Waveform Recording::getWaveform() {
 }
 
 void Recording::setWaveform(Waveform w){
+    qDebug() << "RECORDING: set wave";
     wave = w;
 }
 
@@ -23,6 +25,7 @@ Frequency Recording::getFreq() {
 }
 
 void Recording::setFreq(Frequency f) {
+    qDebug() << "RECORDING: set freq";
     freq = f;
 }
 

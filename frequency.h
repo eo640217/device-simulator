@@ -2,9 +2,9 @@
 #define FREQUENCY_H
 
 enum class Frequency {
-    POINT_FIVE = 1,
-    SEVENTY_SEVEN = 2,
-    ONE_HUNDRED = 3,
+    POINT_FIVE = 0,
+    SEVENTY_SEVEN = 1,
+    ONE_HUNDRED = 2,
 };
 
 #endif // FREQUENCY_H

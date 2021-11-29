@@ -1,16 +1,14 @@
 #include "cesdevice.h"
 
+double CESDevice::timeFactor = 0.5;
+
 CESDevice::CESDevice(QObject *parent) : QObject(parent)
 {
     status = DeviceStatus::OFF;
     //set shutdown time
-    shutdownTime = AutoShutdown::TWENTY_M;
-    if (shutdownTime == AutoShutdown::TWENTY_M)
-        autoS = 20;
-    else if (shutdownTime == AutoShutdown::FOURTY_M)
-        autoS = 40;
-    else
-        autoS = 60;
+    setAutoShutdown(AutoShutdown::TWENTY_M);
+
+
 
     saveRecording = true;
     powerWarned = false;
@@ -38,6 +36,8 @@ void CESDevice::shutdown() {
     // make sure we stop idleT
 
     qInfo("shutting down");
+
+    emit shuttingDown();
 
     powerWarned = false;
 
@@ -71,8 +71,8 @@ void CESDevice::powerOn() {
     status = DeviceStatus::IDLE;
 
     // start idle timer
-    idleT.start(IDLE_TIMEOUT);
-    tickT.start(TICK);
+    idleT.start(IDLE_TIMEOUT * timeFactor);
+    tickT.start(TICK * timeFactor);
 
     // recording also stores the state of the CURRENT treatment
     current = new Recording;
@@ -107,7 +107,7 @@ void rightCurrentChange() { cController.incrementCurrent(); }
 
 void CESDevice::treatmentTick() {
     // check clip connection TODO (if clips not connected should be in paused state)
-    if (!clips.isConnected()){
+    if (!clips.getConnected()){
         status = DeviceStatus::PAUSED;
     }
 
@@ -158,6 +158,8 @@ void CESDevice::displayCurrent() {
 void CESDevice::onCurrentChange(int c) {
     current->setCurrent(c);
 
+    emit currentChanged(c);
+
     // update battery drain
     battery.setDrain(current, status);
 }
@@ -168,7 +170,8 @@ void CESDevice::onClipChange(bool connected) {
         idleT.stop();
         status = DeviceStatus::RUNNING;
     } else if (!connected && status == DeviceStatus::RUNNING) {
-        idleT.start(IDLE_TIMEOUT);
+        // 5 seconds to reconnect
+        idleT.start(TICK * 5 * timeFactor);
         status = DeviceStatus::PAUSED;
     }
 
@@ -176,8 +179,13 @@ void CESDevice::onClipChange(bool connected) {
     battery.setDrain(current, status);
 }
 
-void CESDevice::setAutoShutdown(int s) {
-    autoS = s;
+void CESDevice::setAutoShutdown(AutoShutdown s) {
+    if (s == AutoShutdown::TWENTY_M)
+        autoS = 20 * 60 * TICK * timeFactor;
+    else if (s == AutoShutdown::FOURTY_M)
+        autoS = 40 * 60 * TICK * timeFactor;
+    else
+        autoS = 60 * 60 * TICK * timeFactor;
 }
 
 void CESDevice::powerUpdate(int p) {
@@ -194,4 +202,24 @@ void CESDevice::powerUpdate(int p) {
     }
 
     powerWarned = true;
+}
+
+CurrentControl* CESDevice::getCController() {
+    return &cController;
+}
+
+QList<Recording*>* CESDevice::getRecordings() {
+    return &recordings;
+}
+
+DeviceStatus CESDevice::getStatus() {
+    return status;
+}
+
+Recording* CESDevice::getCurrentRecording() {
+    return current;
+}
+
+void CESDevice::setSaveRecording(bool b) {
+    saveRecording = b;
 }

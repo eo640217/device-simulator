@@ -1,6 +1,8 @@
 #ifndef DEVICEVIEW_H
 #define DEVICEVIEW_H
 
+#include "cesdevice.h"
+
 #include <QWidget>
 
 namespace Ui {
@@ -17,6 +19,7 @@ public:
 
 private:
     Ui::DeviceView *ui;
+    CESDevice device;
 };
 
 #endif // DEVICEVIEW_H

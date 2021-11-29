@@ -8,20 +8,18 @@
 #include <QWidget>
 #include <QVBoxLayout>
 
-DeviceScreenView::DeviceScreenView(QWidget *parent) :
+DeviceScreenView::DeviceScreenView(CESDevice* d, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DeviceScreenView)
 {
     ui->setupUi(this);
 
-    this->treatmentView = new DeviceScreenTreatmentView();
-    this->mainMenu = new DeviceScreenMenuView();
-    this->historyView = new DeviceScreenHistoryView();
-    this->offView = new DeviceScreenOffView();
+    device = d;
 
-    QLabel* circuitCheck = new QLabel( "   ⃠  ");
-    QLabel* menuTitle = new QLabel("Main Menu");
-    QLabel* batteryIcon = new QLabel("Battery");
+    this->treatmentView = new DeviceScreenTreatmentView();
+    this->mainMenu = new DeviceScreenMenuView(device);
+    this->historyView = new DeviceScreenHistoryView(this->device->getRecordings());
+    this->offView = new DeviceScreenOffView();
 
     QWidget* content = new QWidget();
     content->setLayout(new QVBoxLayout());
@@ -29,15 +27,20 @@ DeviceScreenView::DeviceScreenView(QWidget *parent) :
     content->layout()->addWidget(treatmentView);
     content->layout()->addWidget(historyView);
     content->layout()->addWidget(offView);
-    this->setActiveView(ScreenView::MAIN_MENU);
+    this->setActiveView(ScreenView::OFF);
+
+    toggleStatusBar(false);
 
     QGridLayout* layout = new QGridLayout();
     this->setLayout(layout);
 
-    static_cast<QGridLayout*>(this->layout())->addWidget(circuitCheck, 0, 0);
-    static_cast<QGridLayout*>(this->layout())->addWidget(menuTitle, 0, 1, Qt::AlignCenter);
-    static_cast<QGridLayout*>(this->layout())->addWidget(batteryIcon, 0, 2, Qt::AlignRight);
+    static_cast<QGridLayout*>(this->layout())->addWidget(this->ui->TestCircuit, 0, 0);
+    static_cast<QGridLayout*>(this->layout())->addWidget(this->ui->MenuLabel, 0, 1, Qt::AlignCenter);
+    static_cast<QGridLayout*>(this->layout())->addWidget(this->ui->BatteryLevel, 0, 2, Qt::AlignRight);
     static_cast<QGridLayout*>(this->layout())->addWidget(content, 1, 0, 1, 3);
+
+    connect(device, &CESDevice::powerStatus, this, &DeviceScreenView::batteryUpdate);
+    connect(device, &CESDevice::shuttingDown, this, &DeviceScreenView::idleShutdown);
 
 
 }
@@ -67,7 +70,8 @@ void DeviceScreenView::navigateUp(){
     if(this->currentView == ScreenView::MAIN_MENU){
         this->mainMenu->up();
     } else if(this->currentView == ScreenView::TREATMENT){
-        // Handle treatment
+        // increase current
+        this->device->getCController()->increaseCurrent();
     }
 }
 
@@ -75,7 +79,7 @@ void DeviceScreenView::navigateDown(){
     if(this->currentView == ScreenView::MAIN_MENU){
         this->mainMenu->down();
     } else if(this->currentView == ScreenView::TREATMENT){
-        // Handle treatment
+        this->device->getCController()->decreaseCurrent();
     } else if(this->currentView == ScreenView::HISTORY){
         // Handle treatment
     }
@@ -84,45 +88,72 @@ void DeviceScreenView::navigateDown(){
 void DeviceScreenView::navigateLeft(){
     if(this->currentView == ScreenView::MAIN_MENU){
         this->mainMenu->left();
-    } else if(this->currentView == ScreenView::TREATMENT){
-        // Handle treatment
-    } else if(this->currentView == ScreenView::HISTORY){
-        // Handle history
     }
+//    else if(this->currentView == ScreenView::TREATMENT){
+//        // Handle treatment
+//    } else if(this->currentView == ScreenView::HISTORY){
+//        // Handle history
+//    }
 }
 
 void DeviceScreenView::navigateRight(){
     if(this->currentView == ScreenView::MAIN_MENU){
         this->mainMenu->right();
-    } else if(this->currentView == ScreenView::TREATMENT){
-        // Handle treatment
-    } else if(this->currentView == ScreenView::HISTORY){
-        // Handle history
     }
+//    else if(this->currentView == ScreenView::TREATMENT){
+//        // Handle treatment
+//    } else if(this->currentView == ScreenView::HISTORY){
+//        // Handle history
+//    }
 }
 
 void DeviceScreenView::select(){
     if(this->currentView == ScreenView::MAIN_MENU){
         this->setActiveView(this->mainMenu->destinationView());
-    } else if(this->currentView == ScreenView::TREATMENT){
-        // Handle treatment
-    } else if(this->currentView == ScreenView::HISTORY){
-        // Handle history
     }
+//    else if(this->currentView == ScreenView::TREATMENT){
+//        // Handle treatment
+//    } else if(this->currentView == ScreenView::HISTORY){
+//        // Handle history
+//    }
 }
 
 void DeviceScreenView::back(){
     if(this->currentView == ScreenView::MAIN_MENU){
         // Handle main
     } else if(this->currentView == ScreenView::TREATMENT){
-        this->setActiveView(ScreenView::MAIN_MENU);
+        //this->setActiveView(ScreenView::MAIN_MENU);
     } else if(this->currentView == ScreenView::HISTORY){
         this->setActiveView(ScreenView::MAIN_MENU);
     }
 }
 
 void DeviceScreenView::power(){
+    if (device->getStatus() == DeviceStatus::OFF) {
+        setActiveView(ScreenView::MAIN_MENU);
+        device->powerOn();
+        toggleStatusBar(true);
+        return;
+    }
+
+    device->shutdown();
     this->setActiveView(ScreenView::OFF);
+    toggleStatusBar(false);
+}
+
+void DeviceScreenView::batteryUpdate(int p) {
+    this->ui->BatteryLevel->setValue(p);
+}
+
+void DeviceScreenView::toggleStatusBar(bool b) {
+    ui->BatteryLevel->setVisible(b);
+    ui->MenuLabel->setVisible(b);
+    ui->TestCircuit->setVisible(b);
+}
+
+void DeviceScreenView::idleShutdown() {
+    this->setActiveView(ScreenView::OFF);
+    toggleStatusBar(false);
 }
 
 
