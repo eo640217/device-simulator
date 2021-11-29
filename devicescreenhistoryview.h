@@ -18,8 +18,13 @@ public:
     explicit DeviceScreenHistoryView(QList<Recording*>* r, QWidget *parent = nullptr);
     ~DeviceScreenHistoryView();
 
+    void refreshData();
+    void down();
+    void up();
+
 private:
     QList<Recording*>* recordings;
+    int selected;
     Ui::DeviceScreenHistoryView *ui;
 };
 

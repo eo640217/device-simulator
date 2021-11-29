@@ -128,6 +128,7 @@ ScreenView DeviceScreenMenuView::destinationView(){
     if(this->currentMenuItem == 0){
         return ScreenView::TREATMENT;
     } else if(this->currentMenuItem == 5){
+
         return ScreenView::HISTORY;
     }
 

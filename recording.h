@@ -34,6 +34,7 @@ public:
     int getCurrent();
 
     QDate* getDate();
+    QString toString();
 
 signals:
 

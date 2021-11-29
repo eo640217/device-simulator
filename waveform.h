@@ -3,7 +3,7 @@
 
 enum class Waveform{
     ALPHA = 1,
-    BETA = 2,
+    BETTA = 2,
     GAMMA = 3
 };
 

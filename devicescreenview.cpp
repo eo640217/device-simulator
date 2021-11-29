@@ -61,6 +61,7 @@ void DeviceScreenView::setActiveView(ScreenView view){
     } else if(view == ScreenView::TREATMENT){
         this->treatmentView->show();
     } else if(view == ScreenView::HISTORY) {
+        historyView->refreshData();
         this->historyView->show();
     } else if(view == ScreenView::OFF) {
         this->offView->show();
@@ -73,6 +74,8 @@ void DeviceScreenView::navigateUp(){
     } else if(this->currentView == ScreenView::TREATMENT){
         // increase current
         this->device->getCController()->increaseCurrent();
+    } else if (this->currentView == ScreenView::HISTORY) {
+        this->historyView->up();
     }
 }
 
@@ -82,7 +85,7 @@ void DeviceScreenView::navigateDown(){
     } else if(this->currentView == ScreenView::TREATMENT){
         this->device->getCController()->decreaseCurrent();
     } else if(this->currentView == ScreenView::HISTORY){
-        // Handle treatment
+        this->historyView->down();
     }
 }
 

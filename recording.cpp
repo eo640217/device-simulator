@@ -50,3 +50,28 @@ QDate* Recording::getDate() {
     return &date;
 }
 
+QString Recording::toString() {
+    QString f, w;
+    switch (freq) {
+        case Frequency::ONE_HUNDRED: f = "100hz"; break;
+        case Frequency::POINT_FIVE: f = "0.5hz"; break;
+        case Frequency::SEVENTY_SEVEN: f = "77hz"; break;
+    }
+
+    switch (wave) {
+        case Waveform::ALPHA: w = "alpha"; break;
+        case Waveform::BETTA: w = "betta"; break;
+        case Waveform::GAMMA: w = "gamma"; break;
+    }
+
+    QString result;
+
+    result += QString("Session: %1\n").arg(date.toString());
+    result += QString("Duration: %1 minutes\n").arg(length/60);
+    result += QString("Waveform: %1\n").arg(w);
+    result += QString("Frequency: %1\n").arg(f);
+    result += QString("Current: %1uA").arg(current);
+
+    return result;
+}
+
