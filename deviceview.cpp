@@ -16,10 +16,18 @@ DeviceView::DeviceView(QWidget *parent) :
     DeviceScreenView* deviceScreenView = new DeviceScreenView();
     DeviceControlPadView* deviceControlPadView = new DeviceControlPadView();
 
+    connect(deviceControlPadView, SIGNAL(upPressed()), deviceScreenView, SLOT(navigateUp()));
+    connect(deviceControlPadView, SIGNAL(downPressed()), deviceScreenView, SLOT(navigateDown()));
+    connect(deviceControlPadView, SIGNAL(leftPressed()), deviceScreenView, SLOT(navigateLeft()));
+    connect(deviceControlPadView, SIGNAL(rightPressed()), deviceScreenView, SLOT(navigateRight()));
+    connect(deviceControlPadView, SIGNAL(backPressed()), deviceScreenView, SLOT(back()));
+    connect(deviceControlPadView, SIGNAL(selectPressed()), deviceScreenView, SLOT(select()));
+    connect(deviceControlPadView, SIGNAL(powerPressed()), deviceScreenView, SLOT(power()));
+
     QVBoxLayout* deviceLayout = new QVBoxLayout();
     this->setLayout(deviceLayout);
 
-    this->layout()->addWidget(title);
+    static_cast<QVBoxLayout*>(this->layout())->addWidget(title, 0, Qt::AlignCenter);
     this->layout()->addWidget(deviceScreenView);
     this->layout()->addWidget(deviceControlPadView);
 

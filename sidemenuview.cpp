@@ -22,6 +22,9 @@ SideMenuView::SideMenuView(QWidget *parent) :
     electrodesMenuItem->layout()->addWidget(electrodeLabel);
     electrodesMenuItem->layout()->addWidget(electrodeCheckBox);
 
+    QLabel* title = new QLabel("Side Menu");
+    static_cast<QVBoxLayout*>(this->layout())->addWidget(title, 0, Qt::AlignCenter);
+
     this->layout()->addWidget(electrodesMenuItem);
 
 }
