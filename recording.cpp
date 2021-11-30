@@ -7,7 +7,7 @@ Recording::Recording(QObject *parent) : QObject(parent)
     wave = Waveform::ALPHA;
     freq = Frequency::POINT_FIVE;
     date = QDate::currentDate();
-    current = 100;
+    current = 250;
 }
 
 

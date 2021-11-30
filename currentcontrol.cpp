@@ -2,7 +2,7 @@
 
 CurrentControl::CurrentControl(QObject *parent) : QObject(parent)
 {
-    current = 250;
+    current = STARTING_CURRENT;
 }
 
 int CurrentControl::getCurrent() { return current; }
@@ -11,17 +11,26 @@ void CurrentControl::increaseCurrent()
 {
     if (current + 50 > 500) {
         current = 500;
-        return;
+    } else {
+        current += 50;
     }
 
-    current += 50;
+    emit currentChanged(current);
+
+
 }
 
 void CurrentControl::decreaseCurrent()
 {
     if (current - 100 < 0) {
         current = 0;
-        return;
+    } else {
+        current -= 100;
     }
-    current -= 100;
+
+    emit currentChanged(current);
+}
+
+void CurrentControl::resetCurrent() {
+    current = STARTING_CURRENT;
 }

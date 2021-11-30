@@ -1,6 +1,6 @@
 ﻿#include "cesdevice.h"
 
-double CESDevice::timeFactor = 0.5;
+double CESDevice::timeFactor = 1;
 
 CESDevice::CESDevice(QObject *parent) : QObject(parent)
 {
@@ -23,6 +23,8 @@ CESDevice::CESDevice(QObject *parent) : QObject(parent)
 
     // every tick call onTick()
     connect(&tickT, &QTimer::timeout, this, &CESDevice::onTick);
+
+    connect(&cController, &CurrentControl::currentChanged, this, &CESDevice::onCurrentChange);
 }
 
 void CESDevice::beginTreatment()
@@ -62,8 +64,6 @@ void CESDevice::shutdown() {
     status = DeviceStatus::OFF;
 
     // anything else to do? (power probably)
-
-
 }
 
 
@@ -95,7 +95,7 @@ void CESDevice::treatmentTick() {
 
     if (status == DeviceStatus::RUNNING) {
         current->incrementSecond();
-        if (current->getLength() == autoS / 5 / 100) {
+        if (current->getLength() * 1000 == autoS) {
             // treatment is done
             shutdown();
         }
@@ -104,7 +104,7 @@ void CESDevice::treatmentTick() {
 
 void CESDevice::getAutoS()
 {
-    emit changeShutdownTimer(autoS, current->getLength());
+    emit changeShutdownTimer(autoS, current->getLength() * 1000);
 }
 void CESDevice::onTick() {
     // do some stuff every tick

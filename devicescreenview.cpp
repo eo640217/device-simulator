@@ -148,6 +148,8 @@ void DeviceScreenView::power(){
 
     device->shutdown();
     mainMenu->resetMenuOptionsDefault();
+    treatmentView->updateCurrent(STARTING_CURRENT);
+    device->getCController()->resetCurrent();
     this->setActiveView(ScreenView::OFF);
     toggleStatusBar(false);
 }
@@ -165,6 +167,8 @@ void DeviceScreenView::toggleStatusBar(bool b) {
 void DeviceScreenView::idleShutdown() {
     this->setActiveView(ScreenView::OFF);
     mainMenu->resetMenuOptionsDefault();
+    treatmentView->updateCurrent(STARTING_CURRENT);
+    device->getCController()->resetCurrent();
     toggleStatusBar(false);
 }
 

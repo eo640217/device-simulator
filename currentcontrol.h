@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#define STARTING_CURRENT 250
+
 class CurrentControl : public QObject
 {
     Q_OBJECT
@@ -12,6 +14,7 @@ public:
     int getCurrent();
     void increaseCurrent();
     void decreaseCurrent();
+    void resetCurrent();
 
 private:
     int current;
