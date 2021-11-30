@@ -15,9 +15,6 @@ void CurrentControl::increaseCurrent()
     }
 
     current += 50;
-
-    emit currentChanged(current);
-
 }
 
 void CurrentControl::decreaseCurrent()
@@ -27,5 +24,4 @@ void CurrentControl::decreaseCurrent()
         return;
     }
     current -= 100;
-    emit currentChanged(current);
 }

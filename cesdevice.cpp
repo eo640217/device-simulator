@@ -1,4 +1,4 @@
-#include "cesdevice.h"
+﻿#include "cesdevice.h"
 
 double CESDevice::timeFactor = 0.5;
 
@@ -18,21 +18,18 @@ CESDevice::CESDevice(QObject *parent) : QObject(parent)
 
     // configure the power and other stuff...
 
-    // connect the slots to their respective events TODO...
-
-    // menu navigation /* UNCOMMENT WHEN UI IS ADDED */
-    // connect(ui->upButton, &QPushButton::pressed, this, &CESDevice::navigateUpMenu);
-    // connect(ui->downButton, &QPushButton::pressed, this, &CESDevice::navigateDownMenu);
-
-    // current change buttons
-    // connect(&ui->leftCurrentButton, &QPushButton::pressed, this, &CESDevice::leftCurrentChange)
-    // connect(&ui->rightCurrentButton, &QPushButton::pressed, this, &CESDevice::rightCurrentChange)
-
     // if idleT goes off then shutdown
     connect(&idleT, &QTimer::timeout, this, &CESDevice::shutdown);
 
     // every tick call onTick()
     connect(&tickT, &QTimer::timeout, this, &CESDevice::onTick);
+}
+
+void CESDevice::beginTreatment()
+{
+    qInfo("start treatment for %d", autoS);
+    idleT.stop();
+    status = DeviceStatus::RUNNING;
 }
 
 void CESDevice::shutdown() {
@@ -89,54 +86,29 @@ void CESDevice::powerOn() {
     current = new Recording;
 
 }
-//UNCOMMENT WHEN UI IS ADDED
-/*
-void CESDevice::navigateUpMenu() {
-    // CHANGE menuListView to whatever the name on ui is
-    int i = ui->menuListView->currentRow() - 1;
-
-    if (i < 0) {
-        i = ui->menuListView->count() - 1;
-    }
-
-    //ui->menuListView->setCurrentRow(i);
-}
-
-
-void CESDevice::navigateDownMenu() {
-    // CHANGE menuListView to whatever the name on ui is
-    int i = ui->menuListView->currentRow() + 1;
-
-    if (i > ui->menuListView->count() - 1) {
-        i = ui->menuListView->count() - 1;
-    }
-    //ui->menuListView->setCurrentRow(i);
-}
-void leftCurrentChange() { cController.incrementCurrent(); }
-void rightCurrentChange() { cController.incrementCurrent(); }
-*/
 
 void CESDevice::treatmentTick() {
     // check clip connection TODO (if clips not connected should be in paused state)
-    if (!clips.getConnected()){
-        status = DeviceStatus::PAUSED;
+    if (!clips.getConnected()) {
+        idleT.start(TICK * 5 * timeFactor);
     }
 
     if (status == DeviceStatus::RUNNING) {
         current->incrementSecond();
-
-        if (current->getLength() == autoS) {
+        if (current->getLength() == autoS / 5 / 100) {
             // treatment is done
             shutdown();
         }
     }
 }
 
-
+void CESDevice::getAutoS()
+{
+    emit changeShutdownTimer(autoS, current->getLength());
+}
 void CESDevice::onTick() {
     // do some stuff every tick
     qInfo("tick hit");
-
     // power drain
     battery.drainTick();
 
@@ -151,25 +123,13 @@ void CESDevice::onTick() {
 
     if (status == DeviceStatus::RUNNING) {
         treatmentTick();
-        // update gui display for timer/current here
-        displayTimer();
-        displayCurrent();
-
+        getAutoS();
     }
-}
 
-void CESDevice::displayTimer() {
-    qDebug() << "Timer: " << autoS - current->getLength();
-}
-
-void CESDevice::displayCurrent() {
-    qDebug() << "Current: " << cController.getCurrent();
 }
 
 void CESDevice::onCurrentChange(int c) {
     current->setCurrent(c);
-
-    emit currentChanged(c);
 
     // update battery drain
     battery.setDrain(current, status);
@@ -177,12 +137,7 @@ void CESDevice::onCurrentChange(int c) {
 
 void CESDevice::onClipChange(bool connected) {
     clips.setConnected(connected);
-
-    if (connected && status != DeviceStatus::DISABLED && status != DeviceStatus::OFF) {
-        qInfo("start treatment for %d", autoS);
-        idleT.stop();
-        status = DeviceStatus::RUNNING;
-    } else if (!connected && status == DeviceStatus::RUNNING) {
+    if (!connected && status == DeviceStatus::RUNNING) {
         // 5 seconds to reconnect
         idleT.start(TICK * 5 * timeFactor);
         status = DeviceStatus::PAUSED;

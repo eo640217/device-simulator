@@ -6,6 +6,7 @@ DeviceScreenOffView::DeviceScreenOffView(QWidget *parent) :
     ui(new Ui::DeviceScreenOffView)
 {
     ui->setupUi(this);
+
 }
 
 DeviceScreenOffView::~DeviceScreenOffView()

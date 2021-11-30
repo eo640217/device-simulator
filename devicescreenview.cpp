@@ -42,7 +42,8 @@ DeviceScreenView::DeviceScreenView(CESDevice* d, QWidget *parent) :
     connect(device, &CESDevice::powerStatus, this, &DeviceScreenView::batteryUpdate);
     connect(device, &CESDevice::shuttingDown, this, &DeviceScreenView::idleShutdown);
     connect(device, &CESDevice::clipChanged, this, &DeviceScreenView::onClipChange);
-
+    connect(device, SIGNAL(currentChanged(int)), treatmentView, SLOT(updateCurrent(int)));
+    connect(device, SIGNAL(changeShutdownTimer(int, int)), treatmentView, SLOT(updateShutdownTimer(int, int)));
 
 }
 
@@ -59,6 +60,7 @@ void DeviceScreenView::setActiveView(ScreenView view){
     if(view == ScreenView::MAIN_MENU){
         this->mainMenu->show();
     } else if(view == ScreenView::TREATMENT){
+        device->beginTreatment();
         this->treatmentView->show();
     } else if(view == ScreenView::HISTORY) {
         historyView->refreshData();
@@ -74,8 +76,10 @@ void DeviceScreenView::navigateUp(){
     } else if(this->currentView == ScreenView::TREATMENT){
         // increase current
         this->device->getCController()->increaseCurrent();
+        emit device->currentChanged(this->device->getCController()->getCurrent());
     } else if (this->currentView == ScreenView::HISTORY) {
         this->historyView->up();
+
     }
 }
 
@@ -84,6 +88,7 @@ void DeviceScreenView::navigateDown(){
         this->mainMenu->down();
     } else if(this->currentView == ScreenView::TREATMENT){
         this->device->getCController()->decreaseCurrent();
+        emit device->currentChanged(this->device->getCController()->getCurrent());
     } else if(this->currentView == ScreenView::HISTORY){
         this->historyView->down();
     }
@@ -94,8 +99,8 @@ void DeviceScreenView::navigateLeft(){
         this->mainMenu->left();
     }
 //    else if(this->currentView == ScreenView::TREATMENT){
-//        // Handle treatment
-//    } else if(this->currentView == ScreenView::HISTORY){
+//    }
+//     else if(this->currentView == ScreenView::HISTORY){
 //        // Handle history
 //    }
 }
@@ -115,8 +120,9 @@ void DeviceScreenView::select(){
     if(this->currentView == ScreenView::MAIN_MENU){
         this->setActiveView(this->mainMenu->destinationView());
     }
-//    else if(this->currentView == ScreenView::TREATMENT){
-//        // Handle treatment
+//   else if(this->currentView == ScreenView::TREATMENT){
+
+//    }
 //    } else if(this->currentView == ScreenView::HISTORY){
 //        // Handle history
 //    }

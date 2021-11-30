@@ -17,8 +17,8 @@ public:
     ~SideMenuView();
 
 private:
-    Ui::SideMenuView *ui;
     CESDevice* device;
+    Ui::SideMenuView *ui;
     void updateTimeFactor();
 };
 

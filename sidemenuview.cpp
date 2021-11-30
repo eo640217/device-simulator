@@ -20,13 +20,13 @@ SideMenuView::SideMenuView(CESDevice* d, QWidget *parent) :
     connect(ui->ChargeButton, &QPushButton::clicked, device->getBattery(), &Battery::onCharge);
     connect(ui->OverloadButton, &QPushButton::clicked, device, &CESDevice::overload);
 
-
 }
 
 void SideMenuView::updateTimeFactor() {
     ui->TimeLabel->setText(QString("%1x").arg(ui->TimeSlider->value()));
 
     device->updateTimeFactor(ui->TimeSlider->value());
+
 }
 
 SideMenuView::~SideMenuView()

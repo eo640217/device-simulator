@@ -19,6 +19,9 @@
      <property name="smallDecimalPoint">
       <bool>false</bool>
      </property>
+     <property name="digitCount">
+      <number>9</number>
+     </property>
      <property name="mode">
       <enum>QLCDNumber::Dec</enum>
      </property>
@@ -52,7 +55,7 @@
       <number>500</number>
      </property>
      <property name="value">
-      <number>450</number>
+      <number>250</number>
      </property>
      <property name="format">
       <string>%v μA</string>
