@@ -90,7 +90,7 @@ void CESDevice::powerOn() {
 void CESDevice::treatmentTick() {
     // check clip connection TODO (if clips not connected should be in paused state)
     if (!clips.getConnected()) {
-        idleT.start(TICK * 5 * timeFactor);
+        status = DeviceStatus::PAUSED;
     }
 
     if (status == DeviceStatus::RUNNING) {
@@ -141,6 +141,9 @@ void CESDevice::onClipChange(bool connected) {
         // 5 seconds to reconnect
         idleT.start(TICK * 5 * timeFactor);
         status = DeviceStatus::PAUSED;
+    } else if (connected && status == DeviceStatus::PAUSED) {
+        idleT.stop();
+        status = DeviceStatus::RUNNING;
     }
     emit clipChanged(connected);
 
