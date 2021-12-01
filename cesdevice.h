@@ -39,33 +39,31 @@ private:
     QTimer idleT, tickT;
 
     void treatmentTick();
-
-    void charge();
-    void displayTimer();
-    void displayCurrent();
-
-
 public:
-    static double timeFactor;                       // change this to change the fraction of time elapsed (1 = realtime, 1s in sim = 1s), (0.5 = 2x speed, 1s in sim = 0.5s), etc
-    void beginTreatment();
+    // change this to change the fraction of time elapsed (1 = realtime, 1s in sim = 1s), (0.5 = 2x speed, 1s in sim = 0.5s), etc
+    static double timeFactor;
     explicit CESDevice(QObject *parent = nullptr);
-    CurrentControl* getCController();
-    DeviceStatus getStatus();
+    void beginTreatment();
     void shutdown();
     void getAutoS();
+    void powerOn();
+
+    // getters and setters
     QList<Recording*>* getRecordings();
     Recording* getCurrentRecording();
-    void updateTimeFactor(int f);
+    void setTimeFactor(int f);
     Battery* getBattery();
     Clips* getClips();
+    CurrentControl* getCController();
+    DeviceStatus getStatus();
+    void setAutoShutdown(AutoShutdown c);
+
 
 public slots:
     void powerUpdate(int p);
     void onTick();
     void onCurrentChange(int c);
     void onClipChange(bool b);
-    void setAutoShutdown(AutoShutdown c);
-    void powerOn();
     void setSaveRecording(bool b);
     void overload();
 

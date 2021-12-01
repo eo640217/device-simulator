@@ -1,9 +1,6 @@
 #include "deviceview.h"
 #include "ui_deviceview.h"
 #include <QVBoxLayout>
-#include "devicescreenview.h"
-#include "devicecontrolpadview.h"
-#include "sidemenuview.h"
 #include <QLabel>
 #include <QSizePolicy>
 
@@ -14,8 +11,8 @@ DeviceView::DeviceView(QWidget *parent) :
     ui->setupUi(this);
 
     QLabel* title = new QLabel("CES");
-    DeviceScreenView* deviceScreenView = new DeviceScreenView(&device);
-    DeviceControlPadView* deviceControlPadView = new DeviceControlPadView();
+    deviceScreenView = new DeviceScreenView(&device);
+    deviceControlPadView = new DeviceControlPadView();
 
     connect(deviceControlPadView, SIGNAL(upPressed()), deviceScreenView, SLOT(navigateUp()));
     connect(deviceControlPadView, SIGNAL(downPressed()), deviceScreenView, SLOT(navigateDown()));
@@ -44,7 +41,7 @@ DeviceView::DeviceView(QWidget *parent) :
 
     windowLayout->addWidget(main);
 
-    SideMenuView* sideMenuView = new SideMenuView(&device);
+    sideMenuView = new SideMenuView(&device);
 
     windowLayout->addWidget(sideMenuView);
 

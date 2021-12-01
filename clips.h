@@ -14,10 +14,6 @@ public:
 
 private:
    bool connected;
-   int disconnectionTimer;
-
-signals:
-   void connectedChange(bool c);
 
 };
 

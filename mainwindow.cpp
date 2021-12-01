@@ -8,20 +8,9 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-//    SideMenuView* sideMenuView = new SideMenuView();
     DeviceView* deviceView = new DeviceView();
 
     setCentralWidget(deviceView);
-
-//    QHBoxLayout *mainWindowLayout = new QHBoxLayout();
-//    QWidget *mainWidget = new QWidget();
-//    mainWidget->setLayout(mainWindowLayout);
-//    this->setCentralWidget(mainWidget);
-
-//    mainWidget->layout()->addWidget(deviceView);
-//    mainWidget->layout()->addWidget(sideMenuView);
-
 }
 
 MainWindow::~MainWindow()

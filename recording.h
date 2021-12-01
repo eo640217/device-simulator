@@ -21,23 +21,18 @@ private:
 public:
     explicit Recording(QObject *parent = nullptr);
 
-    Waveform getWaveform();
-    void setWaveform(Waveform w);
-
-    Frequency getFreq();
-    void setFreq(Frequency f);
-
     void incrementSecond();
-    int getLength();
-
-    void setCurrent(int c);
-    int getCurrent();
-
-    QDate* getDate();
     QString toString();
 
-signals:
-
+    // getters / setters
+    Waveform getWaveform();
+    void setWaveform(Waveform w);
+    Frequency getFreq();
+    void setFreq(Frequency f);
+    int getLength();
+    void setCurrent(int c);
+    int getCurrent();
+    QDate* getDate();
 };
 
 #endif // RECORDING_H

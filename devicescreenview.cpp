@@ -36,8 +36,9 @@ DeviceScreenView::DeviceScreenView(CESDevice* d, QWidget *parent) :
 
     static_cast<QGridLayout*>(this->layout())->addWidget(this->ui->TestCircuit, 0, 0);
     static_cast<QGridLayout*>(this->layout())->addWidget(this->ui->MenuLabel, 0, 1, Qt::AlignCenter);
-    static_cast<QGridLayout*>(this->layout())->addWidget(this->ui->BatteryLevel, 0, 2, Qt::AlignRight);
-    static_cast<QGridLayout*>(this->layout())->addWidget(content, 1, 0, 1, 3);
+    static_cast<QGridLayout*>(this->layout())->addWidget(this->ui->BatteryLevel, 0, 3, Qt::AlignRight);
+    static_cast<QGridLayout*>(this->layout())->addWidget(ui->BatteryWarning, 0, 2);
+    static_cast<QGridLayout*>(this->layout())->addWidget(content, 1, 0, 1, 4);
 
     connect(device, &CESDevice::powerStatus, this, &DeviceScreenView::batteryUpdate);
     connect(device, &CESDevice::shuttingDown, this, &DeviceScreenView::idleShutdown);
@@ -109,23 +110,12 @@ void DeviceScreenView::navigateRight(){
     if(this->currentView == ScreenView::MAIN_MENU){
         this->mainMenu->right();
     }
-//    else if(this->currentView == ScreenView::TREATMENT){
-//        // Handle treatment
-//    } else if(this->currentView == ScreenView::HISTORY){
-//        // Handle history
-//    }
 }
 
 void DeviceScreenView::select(){
     if(this->currentView == ScreenView::MAIN_MENU){
         this->setActiveView(this->mainMenu->destinationView());
     }
-//   else if(this->currentView == ScreenView::TREATMENT){
-
-//    }
-//    } else if(this->currentView == ScreenView::HISTORY){
-//        // Handle history
-//    }
 }
 
 void DeviceScreenView::back(){
@@ -156,12 +146,14 @@ void DeviceScreenView::power(){
 
 void DeviceScreenView::batteryUpdate(int p) {
     this->ui->BatteryLevel->setValue(p);
+    ui->BatteryWarning->setVisible(p <= 5);
 }
 
 void DeviceScreenView::toggleStatusBar(bool b) {
     ui->BatteryLevel->setVisible(b);
     ui->MenuLabel->setVisible(b);
     ui->TestCircuit->setVisible(b && !device->getClips()->getConnected());
+    ui->BatteryWarning->setVisible(b && device->getBattery()->getPower() < 5);
 }
 
 void DeviceScreenView::idleShutdown() {

@@ -106,6 +106,7 @@ void CESDevice::getAutoS()
 {
     emit changeShutdownTimer(autoS, current->getLength() * 1000);
 }
+
 void CESDevice::onTick() {
     // do some stuff every tick
     qInfo("tick hit");
@@ -196,7 +197,7 @@ void CESDevice::setSaveRecording(bool b) {
     saveRecording = b;
 }
 
-void CESDevice::updateTimeFactor(int c) {
+void CESDevice::setTimeFactor(int c) {
     int remaining;
     if (idleT.isActive()) {
         remaining = idleT.remainingTime();

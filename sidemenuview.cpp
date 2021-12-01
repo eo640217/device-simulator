@@ -25,7 +25,7 @@ SideMenuView::SideMenuView(CESDevice* d, QWidget *parent) :
 void SideMenuView::updateTimeFactor() {
     ui->TimeLabel->setText(QString("%1x").arg(ui->TimeSlider->value()));
 
-    device->updateTimeFactor(ui->TimeSlider->value());
+    device->setTimeFactor(ui->TimeSlider->value());
 
 }
 

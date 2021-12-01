@@ -2,6 +2,9 @@
 #define DEVICEVIEW_H
 
 #include "cesdevice.h"
+#include "devicescreenview.h"
+#include "devicecontrolpadview.h"
+#include "sidemenuview.h"
 
 #include <QWidget>
 
@@ -20,6 +23,9 @@ public:
 private:
     Ui::DeviceView *ui;
     CESDevice device;
+    DeviceScreenView* deviceScreenView;
+    DeviceControlPadView* deviceControlPadView;
+    SideMenuView* sideMenuView;
 };
 
 #endif // DEVICEVIEW_H
