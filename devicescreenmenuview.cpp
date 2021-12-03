@@ -141,7 +141,7 @@ void DeviceScreenMenuView::setCurrentMenuItem(int menuItem){
         QPalette palette = this->menuItems[i]->palette();
 
         if(i == menuItem){
-            palette.setColor(this->menuItems[i]->foregroundRole(), Qt::blue);
+            palette.setColor(this->menuItems[i]->foregroundRole(), Qt::white);
         } else {
             palette.setColor(this->menuItems[i]->foregroundRole(), Qt::black);
         }

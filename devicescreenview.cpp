@@ -21,7 +21,9 @@ DeviceScreenView::DeviceScreenView(CESDevice* d, QWidget *parent) :
     this->historyView = new DeviceScreenHistoryView(this->device->getRecordings());
     this->offView = new DeviceScreenOffView();
 
+
     QWidget* content = new QWidget();
+    content->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     content->setLayout(new QVBoxLayout());
     content->layout()->addWidget(mainMenu);
     content->layout()->addWidget(treatmentView);
@@ -45,6 +47,8 @@ DeviceScreenView::DeviceScreenView(CESDevice* d, QWidget *parent) :
     connect(device, &CESDevice::clipChanged, this, &DeviceScreenView::onClipChange);
     connect(device, SIGNAL(currentChanged(int)), treatmentView, SLOT(updateCurrent(int)));
     connect(device, SIGNAL(changeShutdownTimer(int, int)), treatmentView, SLOT(updateShutdownTimer(int, int)));
+
+    //this->setStyleSheet("background-color: #ffffff");
 
 }
 

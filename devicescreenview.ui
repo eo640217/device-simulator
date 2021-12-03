@@ -18,8 +18,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>401</width>
-     <height>41</height>
+     <width>382</width>
+     <height>45</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -503,7 +503,8 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset theme="battery-low"/>
+       <iconset theme="battery-low">
+        <normaloff>.</normaloff>.</iconset>
       </property>
       <property name="checkable">
        <bool>false</bool>

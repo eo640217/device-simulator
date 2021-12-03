@@ -7,12 +7,13 @@
 #include "sidemenuview.h"
 
 #include <QWidget>
+#include <QFrame>
 
 namespace Ui {
 class DeviceView;
 }
 
-class DeviceView : public QWidget
+class DeviceView : public QFrame
 {
     Q_OBJECT
 
