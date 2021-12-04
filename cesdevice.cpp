@@ -85,6 +85,9 @@ void CESDevice::powerOn() {
     // recording also stores the state of the CURRENT treatment
     current = new Recording;
 
+    // make sure drain gets reset
+    battery.setDrain(current, status);
+
 }
 
 void CESDevice::treatmentTick() {
