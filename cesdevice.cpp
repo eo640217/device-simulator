@@ -8,11 +8,6 @@ CESDevice::CESDevice(QObject *parent) : QObject(parent)
     //set shutdown time
     setAutoShutdown(AutoShutdown::TWENTY_M);
 
-//    recordings.append(new Recording);
-//    recordings.append(new Recording);
-//    recordings.append(new Recording);
-
-
     saveRecording = true;
     powerWarned = false;
 
@@ -62,6 +57,8 @@ void CESDevice::shutdown() {
     }
 
     status = DeviceStatus::OFF;
+
+    setAutoShutdown(AutoShutdown::TWENTY_M);
 
     // anything else to do? (power probably)
 }
