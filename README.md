@@ -8,7 +8,7 @@ A CES device is a non-invasive neuro-stimulation medical device that delivers mi
 an electrode through the earlobes to stimulate the brain for the purpose of therapeutic 
 intervention
 
-##Full Documentation **here**
+##Full Documentation **[here](https://drive.google.com/file/d/1BFUtsFfr_YjTBYcObUrNfKLs83SF2fAu/view?usp=sharing)**
 
 ## How To Use 
 
